@@ -13,7 +13,7 @@ This project implements a Breakout game AI using the NEAT (NeuroEvolution of Aug
 
 1. Clone the repository:
     ```bash
-    git clone https://github.com/yourusername/breakout-ai.git
+    git clone https://github.com/Fbrrrr/breakout-ai.git
     cd breakout-ai
     ```
 
@@ -39,7 +39,7 @@ This project implements a Breakout game AI using the NEAT (NeuroEvolution of Aug
 
 ## Screenshots
 
-![Screenshot](screenshot.png)
+To do
 
 ## Acknowledgements
 
