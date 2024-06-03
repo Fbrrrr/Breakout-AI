@@ -8,9 +8,9 @@ import matplotlib.pyplot as plt
 
 SCREEN_WIDTH = 160
 SCREEN_HEIGHT = 120
-BALL_SPEED_INCREMENT = 0.5
+BALL_SPEED_INCREMENT = 0
 BLOCK_BREAK_TIMEOUT = 30  # 30 seconds timeout for breaking blocks
-FPS = 165
+FPS = 60
 
 BALL_COLORS = [8, 9, 10, 11, 12, 13, 14]
 MEDIUM_LIGHT_GREY = 13  # Pyxel color palette
@@ -131,6 +131,8 @@ class GameState:
         self.blocks = self.create_blocks()
         self.timeout_counter = 0
         self.finished = False
+        self.bounces = 0  # Track the number of bounces off the paddle
+        self.paddle_distance = 0  # Track the distance moved by the paddle
 
     def create_blocks(self):
         block_width = SCREEN_WIDTH // 10
@@ -151,8 +153,11 @@ class GameState:
 
         ball.update()
         ball.on_screen()
-        ball.hits_paddle(paddle)
+        if ball.hits_paddle(paddle):
+            self.bounces += 1
+        previous_paddle_x = paddle.x
         paddle.update(ball)
+        self.paddle_distance += abs(paddle.x - previous_paddle_x)
 
         for block in self.blocks:
             block.hits(ball)
@@ -162,7 +167,7 @@ class GameState:
         self.paddle = paddle
 
         if ball.hits_ground() or self.timeout_counter >= BLOCK_BREAK_TIMEOUT * FPS:
-            self.genome.fitness = len(self.blocks)
+            self.genome.fitness = (len(self.blocks) * 10) + (self.bounces * 5) - (self.paddle_distance * 0.1)
             self.finished = True
         else:
             self.timeout_counter += 1
@@ -191,6 +196,7 @@ class BreakoutVisualizer:
         self.finished_count = len(finished_states)
         for state in self.states:
             state.update()
+        self.calculate_fitness()  # Recalculate fitness values on each update
 
     def draw(self):
         pyxel.cls(0)
